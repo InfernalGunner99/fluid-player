@@ -197,7 +197,8 @@ const fluidPlayerClass = function () {
                 controlBar: {
                     autoHide: false,
                     autoHideTimeout: 3,
-                    animated: true
+                    animated: true,
+                    playbackRates: ['x2', 'x1.5', 'x1', 'x0.5']
                 },
                 timelinePreview: {
                     spriteImage: false,
@@ -2508,8 +2509,6 @@ const fluidPlayerClass = function () {
     };
 
     self.createPlaybackList = () => {
-        const playbackRates = ['x2', 'x1.5', 'x1', 'x0.5'];
-
         if (!self.displayOptions.layoutControls.playbackRateEnabled) {
             return;
         }
@@ -2523,7 +2522,16 @@ const fluidPlayerClass = function () {
         sourceChangeList.className = 'fluid_video_playback_rates';
         sourceChangeList.style.display = 'none';
 
-        playbackRates.forEach(function (rate) {
+        if (
+            !Array.isArray(self.displayOptions.layoutControls.controlBar.playbackRates)
+            || self.displayOptions.layoutControls.controlBar.playbackRates.some(
+                rate => typeof rate !== 'string' || Number.isNaN(Number(rate.replace('x', '')))
+            )
+        ) {
+            self.displayOptions.layoutControls.controlBar.playbackRates = ['x2', 'x1.5', 'x1', 'x0.5'];
+        }
+
+        self.displayOptions.layoutControls.controlBar.playbackRates.forEach(function (rate) {
             const sourceChangeDiv = document.createElement('div');
             sourceChangeDiv.className = 'fluid_video_playback_rates_item';
             sourceChangeDiv.innerText = rate;
